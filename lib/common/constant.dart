@@ -43,7 +43,7 @@ bool keyboardIsOpen(BuildContext context) {
   return MediaQuery.of(context).viewInsets.bottom != 0;
 }
 
-Color primaryColor = Colors.red;
+Color primaryColor = const Color(0xff3785FC);
 Color secondaryColor = const Color(0xFF43afc8);
 Color sionYellowColor = const Color(0xffFFD600);
 Color darkColor = const Color(0xff141118);
