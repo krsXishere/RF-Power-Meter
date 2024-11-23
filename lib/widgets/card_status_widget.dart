@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rf_power_meter/common/constant.dart';
+import 'package:rf_power_meter/providers/sensor_data_provider.dart';
 
 class CardStatusWidget extends StatelessWidget {
   const CardStatusWidget({super.key});
@@ -11,7 +13,7 @@ class CardStatusWidget extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 2,
+        childAspectRatio: 1.7,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
       ),
@@ -31,10 +33,14 @@ class CardStatusWidget extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              Text(
-                "3 °C",
-                style: secondaryTextStyle.copyWith(
-                    fontSize: 14, fontWeight: semiBold),
+              Consumer<SensorDataProvider>(
+                builder: (context, sensorDataProvider, child) {
+                  return Text(
+                    "${sensorDataProvider.sensorDataModel?.temperature ?? 0} °C",
+                    style: secondaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: semiBold),
+                  );
+                },
               ),
             ],
           ),
@@ -54,10 +60,14 @@ class CardStatusWidget extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              Text(
-                "3 dBm",
-                style: secondaryTextStyle.copyWith(
-                    fontSize: 14, fontWeight: semiBold),
+              Consumer<SensorDataProvider>(
+                builder: (context, sensorDataProvider, child) {
+                  return Text(
+                    "${sensorDataProvider.sensorDataModel?.rfRadiationPower ?? 0} dBm",
+                    style: secondaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: semiBold),
+                  );
+                },
               ),
             ],
           ),
@@ -77,10 +87,14 @@ class CardStatusWidget extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              Text(
-                "3 Watt/kg",
-                style: secondaryTextStyle.copyWith(
-                    fontSize: 14, fontWeight: semiBold),
+              Consumer<SensorDataProvider>(
+                builder: (context, sensorDataProvider, child) {
+                  return Text(
+                    "${sensorDataProvider.sar} ${sensorDataProvider.unit}/Kg",
+                    style: secondaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: semiBold),
+                  );
+                },
               ),
             ],
           ),
@@ -100,10 +114,14 @@ class CardStatusWidget extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-              Text(
-                "3 mW/cm²",
-                style: secondaryTextStyle.copyWith(
-                    fontSize: 14, fontWeight: semiBold),
+              Consumer<SensorDataProvider>(
+                builder: (context, sensorDataProvider, child) {
+                  return Text(
+                    "${sensorDataProvider.powerDensity} ${sensorDataProvider.unit}/cm²",
+                    style: secondaryTextStyle.copyWith(
+                        fontSize: 14, fontWeight: semiBold),
+                  );
+                },
               ),
             ],
           ),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rf_power_meter/common/constant.dart';
 import 'package:rf_power_meter/models/chart_data_rf_radiation_power_model.dart';
-
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class RfRadiationPowerChartWidget extends StatelessWidget {
