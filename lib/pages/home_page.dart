@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
               ),
             ),
             Text(
-              "Moniroting di sini!",
+              "Monitoring di sini!",
               style: secondaryTextStyle.copyWith(
                 fontSize: 14,
               ),
