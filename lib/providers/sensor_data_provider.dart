@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:flutter/foundation.dart';
+import 'package:rf_power_meter/models/chart_data_rf_radiation_power_model.dart';
+import 'package:rf_power_meter/models/chart_data_sar_model.dart';
 import 'package:rf_power_meter/models/sensor_data_model.dart';
 import 'package:rf_power_meter/services/sensor_data_service.dart';
 
@@ -14,23 +17,52 @@ class SensorDataProvider with ChangeNotifier {
   String get sar => _sar;
   String _powerDensity = "";
   String get powerDensity => _powerDensity;
+  final List<ChartDataSARModel> _chartSar = [];
+  List<ChartDataSARModel> get chartSar => _chartSar;
+  final List<ChartDataRFRadiationPowerModel> _chartRFRadiationPower = [];
+  List<ChartDataRFRadiationPowerModel> get chartRFRadiationPower =>
+      _chartRFRadiationPower;
+
+  Timer? _timer; // Tambahkan timer sebagai properti dalam class
 
   Future<void> connect() async {
     try {
       // Hubungkan ke broker MQTT
       await _sensorDataService.connect();
 
-      // Tunggu data pertama dari `listenToMessages`
-      final sensorData = await _sensorDataService.listenToMessages();
-      // Perbarui data di provider
-      _sensorDataModel = sensorData;
-      setSar();
-      setPowerDensity();
+      // Polling data secara periodik
+      _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) async {
+        try {
+          final sensorData = await _sensorDataService.listenToMessages();
+          _sensorDataModel = sensorData;
 
-      notifyListeners();
+          setSar(); // Update nilai SAR
+          setPowerDensity(); // Update Power Density
+
+          // Tambahkan data ke grafik
+          _chartSar.add(ChartDataSARModel(
+            dateTime: DateTime.now(),
+            sar: convertValue(sensorData.sar ?? 0, "µW").toStringAsFixed(2),
+          ));
+          _chartRFRadiationPower.add(ChartDataRFRadiationPowerModel(
+            dateTime: DateTime.now(),
+            rfRadiationPower: sensorData.rfRadiationPower.toString(),
+          ));
+
+          notifyListeners();
+        } catch (e) {
+          dev.log("Error fetching data: $e");
+        }
+      });
     } catch (e) {
       dev.log("Error: $e");
     }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   void setUnit(String value) {
@@ -51,7 +83,6 @@ class SensorDataProvider with ChangeNotifier {
   }
 
   void setPowerDensity() async {
-    dev.log("power density: ${sensorDataModel?.powerDensity}");
     if (_unit == "Watt") {
       _powerDensity =
           convertValue(sensorDataModel?.powerDensity ?? 0, _unit).toString();
@@ -75,5 +106,30 @@ class SensorDataProvider with ChangeNotifier {
       default:
         throw Exception("Unit tidak dikenal: $unit");
     }
+  }
+
+  Stream<List<ChartDataSARModel>> get chartDataSarStream async* {
+    yield* Stream.periodic(const Duration(milliseconds: 500), (_) {
+      try {
+        return _chartSar;
+        // return [];
+      } catch (e) {
+        dev.log(e.toString());
+        throw Exception(e);
+      }
+    });
+  }
+
+  Stream<List<ChartDataRFRadiationPowerModel>>
+      get chartDataRFRadiationPowerStream async* {
+    yield* Stream.periodic(const Duration(milliseconds: 500), (_) {
+      try {
+        return _chartRFRadiationPower;
+        // return [];
+      } catch (e) {
+        dev.log(e.toString());
+        throw Exception(e);
+      }
+    });
   }
 }

@@ -90,7 +90,7 @@ class CardStatusWidget extends StatelessWidget {
               Consumer<SensorDataProvider>(
                 builder: (context, sensorDataProvider, child) {
                   return Text(
-                    "${sensorDataProvider.sar} ${sensorDataProvider.unit}/Kg",
+                    "${sensorDataProvider.sar} ${sensorDataProvider.unit}/kg",
                     style: secondaryTextStyle.copyWith(
                         fontSize: 14, fontWeight: semiBold),
                   );

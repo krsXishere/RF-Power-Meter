@@ -74,7 +74,7 @@ class HomePage extends StatelessWidget {
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
-                          borderSide: const  BorderSide(
+                          borderSide: const BorderSide(
                             color: Colors.grey,
                           ),
                         ),

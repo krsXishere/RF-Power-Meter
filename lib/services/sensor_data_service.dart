@@ -3,13 +3,21 @@ import 'dart:developer';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:rf_power_meter/models/sensor_data_model.dart';
+import 'dart:math' as math;
 
 class SensorDataService {
   late MqttServerClient client;
 
+  final _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  final math.Random _rnd = math.Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
   Future<void> connect() async {
     // Konfigurasi client MQTT
-    client = MqttServerClient("167.86.84.22", "1260hu2445");
+    client = MqttServerClient("167.86.84.22", getRandomString(6));
     String username = "1260hu2445";
     String password = "670ehijopy";
     String topic = "1260hu2445/telepati";
