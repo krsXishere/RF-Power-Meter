@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:developer' as dev;
 import 'dart:math';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:rf_power_meter/models/chart_data_rf_radiation_power_model.dart';
 import 'package:rf_power_meter/models/chart_data_sar_model.dart';
 import 'package:rf_power_meter/models/sensor_data_model.dart';
@@ -23,6 +23,11 @@ class SensorDataProvider with ChangeNotifier {
   List<ChartDataRFRadiationPowerModel> get chartRFRadiationPower =>
       _chartRFRadiationPower;
 
+  String _status = "Normal";
+  String get status => _status;
+  Color _statusColor = Colors.green;
+  Color get statusColor => _statusColor;
+
   Timer? _timer; // Tambahkan timer sebagai properti dalam class
 
   Future<void> connect() async {
@@ -35,6 +40,7 @@ class SensorDataProvider with ChangeNotifier {
         try {
           final sensorData = await _sensorDataService.listenToMessages();
           _sensorDataModel = sensorData;
+          setStatus();
 
           setSar(); // Update nilai SAR
           setPowerDensity(); // Update Power Density
@@ -131,5 +137,24 @@ class SensorDataProvider with ChangeNotifier {
         throw Exception(e);
       }
     });
+  }
+
+  setStatus() {
+    // dev.log("SAR ROUND: ${sensorDataModel!.sar!.round()}");
+    if (sensorDataModel != null) {
+      if (sensorDataModel!.sar!.round() < 1) {
+        _status = "Normal";
+        _statusColor = Colors.green;
+      } else if (sensorDataModel!.sar!.round() >= 1 &&
+          sensorDataModel!.sar!.round() <= 2) {
+        _status = "Moderate";
+        _statusColor = Colors.orange;
+      } else {
+        _status = "Danger";
+        _statusColor = Colors.red;
+      }
+    }
+
+    notifyListeners();
   }
 }

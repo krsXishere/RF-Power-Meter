@@ -124,7 +124,35 @@ class HomePage extends StatelessWidget {
               SizedBox(
                 height: defaultPadding,
               ),
+              SizedBox(
+                height: defaultPadding,
+              ),
               const CardStatusWidget(),
+              SizedBox(
+                height: defaultPadding,
+              ),
+              Consumer<SensorDataProvider>(
+                builder: (context, sensorDataProvider, child) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "Status: ",
+                        style: secondaryTextStyle.copyWith(
+                          fontSize: 20,
+                        ),
+                      ),
+                      Text(
+                        sensorDataProvider.status,
+                        style: secondaryTextStyle.copyWith(
+                          color: sensorDataProvider.statusColor,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
               SizedBox(
                 height: defaultPadding,
               ),
